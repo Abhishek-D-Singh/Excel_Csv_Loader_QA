@@ -57,9 +57,7 @@ if uploaded_file:
     embeddings = OpenAIEmbeddings()
     vectors = FAISS.from_documents(data, embeddings)
     
-  agent = create_csv_agent(OpenAI(temperature=0), 
-                         csv_file_path, 
-                         verbose=False)
+  agent = create_csv_agent(OpenAI(temperature=0), csv_file_path, verbose=False)
 
     def conversational_chat(query):
         result = agent.run(query)
