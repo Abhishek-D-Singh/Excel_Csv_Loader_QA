@@ -57,7 +57,7 @@ if uploaded_file:
     embeddings = OpenAIEmbeddings()
     vectors = FAISS.from_documents(data, embeddings)
     
-    class CSVAgent:
+  class CSVAgent:
     def __init__(self, llm, retriever, data_loader, column_name_key, answer_column_name):
         self.chain = ConversationalRetrievalChain.from_llm(llm=llm, retriever=retriever)
         self.data_loader = data_loader
