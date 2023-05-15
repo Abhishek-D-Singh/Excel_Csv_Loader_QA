@@ -56,7 +56,24 @@ if uploaded_file:
 
     embeddings = OpenAIEmbeddings()
     vectors = FAISS.from_documents(data, embeddings)
+    
+class CSVAgent:
+    def __init__(self, llm, retriever, data_loader, column_name_key, answer_column_name):
+        self.chain = ConversationalRetrievalChain.from_llm(llm=llm, retriever=retriever)
+        self.data_loader = data_loader
+        self.column_name_key = column_name_key
+        self.answer_column_name = answer_column_name
 
+    def load_data(self):
+        data = self.data_loader.load()
+        return data
+
+    def run(self, query):
+        data = self.load_data()
+        chat_history = [{"question": self.column_name_key, "answer": self.answer_column_name}]
+        chat_history.extend(data)
+        result = self.chain({"question": query, "chat_history": chat_history})
+        return result
     # Create a CSV agent
     agent = CSVAgent(
         llm=OpenAI(api_key=user_api_key),
