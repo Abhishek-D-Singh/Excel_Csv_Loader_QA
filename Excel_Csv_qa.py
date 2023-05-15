@@ -53,18 +53,23 @@ if uploaded_file:
     response = chain({"question": query})
 
     print(response['result'])
+
     embeddings = OpenAIEmbeddings()
     vectors = FAISS.from_documents(data, embeddings)
-    chain = ConversationalRetrievalChain.from_llm(
-        llm=ChatOpenAI(temperature=0.0, model_name='gpt-3.5-turbo', openai_api_key=user_api_key),
-        retriever=vectors.as_retriever()
+
+    # Create a CSV agent
+    agent = CSVAgent(
+        llm=OpenAI(api_key=user_api_key),
+        retriever=vectors.as_retriever(),
+        data_loader=loader,
+        column_name_key="question",
+        answer_column_name="answer"
     )
 
     def conversational_chat(query):
-        result = chain({"question": query, "chat_history": st.session_state['history']})
+        result = agent.run(query)
         st.session_state['history'].append((query, result["answer"]))
         return result["answer"]
-
     if 'history' not in st.session_state:
         st.session_state['history'] = []
 
