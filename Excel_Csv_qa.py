@@ -43,7 +43,7 @@ if uploaded_file:
     # Create a question-answering chain using the index
     chain = RetrievalQA.from_chain_type(
         llm=OpenAI(),
-        chain_type="faq",
+        chain_type="refine",
         retriever=docsearch.vectorstore.as_retriever(),
         input_key="question"
     )
